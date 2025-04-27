@@ -12,8 +12,6 @@ pipeline {
       steps {
 				sh '''
 					ls -la
-					npm --version
-					node --version
 					echo "Installing dependencies... ⬇️"
 					npm ci
 					echo "Building... 🚀"
@@ -22,5 +20,21 @@ pipeline {
 				'''
 			}
     }
+
+		stage("test") {
+			agent {
+				docker {
+					image 'node:22-alpine'
+					reuseNode true
+				}
+			}
+			steps {
+				sh '''
+					echo "Running tests... 🧪"
+					test -f build/index.html
+					npm test
+				'''
+			}
+		}
   }
 }
